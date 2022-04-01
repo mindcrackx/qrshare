@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>qrshare</title>
+</head>
+
+<body>
+
+    <div style="text-align: center; vertical-align: middle;">
+        <h1 id="part">Part: 1</h1>
+        <br>
+        <img id="qrimg" src="/1" alt="qrimg">
+    </div>
+
+    <script>
+        function checkKey(e) {
+            e = e || window.event;
+
+            const code = e.keyCode;
+
+            if (code === 37 || code === 65) {
+                // arrow left (37) or a (65) or A
+                var img = document.getElementById("qrimg");
+                var part = document.getElementById("part");
+
+                currId = parseInt(img.getAttribute("src").slice(1));
+                if (currId !== 1) {
+                    img.src = "/" + (currId - 1).toString();
+                    part.innerText = "Part: " + (currId - 1).toString()
+                }
+
+            } else if (e.keyCode === 39 || code === 68) {
+                // arrow right (39) or d (68) or D
+                var img = document.getElementById("qrimg");
+                var part = document.getElementById("part");
+
+                currId = parseInt(img.getAttribute("src").slice(1));
+                img.src = "/" + (currId + 1).toString();
+                part.innerText = "Part: " + (currId + 1).toString();
+            }
+        }
+
+        window.addEventListener("keydown", checkKey);
+    </script>
+</body>
+
+</html>

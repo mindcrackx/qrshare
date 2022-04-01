@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>qrshare</title>
+</head>
+
+<body>
+
+    <div>
+        <button id="start">Start</button>
+        <video id="video" autoplay></video>
+        <pre id="result"></pre>
+    </div>
+
+    <script>
+        window.addEventListener("load", function () {
+            if (!("BarcodeDetector" in window)) {
+                alert("BarcodeDetector is not available");
+                return
+            }
+
+            const start = document.getElementById("start");
+            const video = document.getElementById("video");
+            const result = document.getElementById("result");
+
+            const barcodeDetector = new BarcodeDetector();
+
+            (async () => {
+                result.textContent = (await barcodeDetector.getSupportedFormats()).join("\n");
+            })().catch(err => {
+                result.textContent = err;
+            });
+
+            const capture = async () => {
+                try {
+                    const barcodes = await barcodeDetector.detect(video);
+                    const log = barcodes.map((format, rawValue) => `- ${format}: ${rawValue}`).join("\n");
+                    requestAnimationFrame(capture);
+                } catch (err) {
+                    console.error(err);
+                }
+            };
+
+            video.addEventListener("play", () => capture());
+
+            start.addEventListener("click", () => {
+                start.disabled = true;
+                (async () => {
+                    const media = await navigator.mediaDevices.getUserMedia(
+                        {
+                            audio: false,
+                            video: {
+                                facingMode: "environment"
+                            }
+                        }
+                    );
+                    video.srcObject = media;
+                    video.autoplay = true;
+                })().catch(err => {
+                    console.error(err);
+                })
+            }, { once: true });
+        })
+    </script>
+</body>
+
+</html>
